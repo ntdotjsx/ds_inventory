@@ -1,0 +1,23 @@
+.inventory {
+  display: grid;
+  grid-template-columns: repeat(5, 100px);
+  gap: 10px;
+  padding: 20px;
+  background-color: #333;
+  border-radius: 8px;
+  width: max-content;
+}
+.slot {
+  width: 100px;
+  height: 100px;
+  background-color: #444;
+  border: 2px solid #555;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: white;
+  font-size: 0.8em;
+  text-align: center;
+}

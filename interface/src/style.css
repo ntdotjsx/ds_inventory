@@ -46,6 +46,11 @@ body {
   background-color: #66a3ff;
 }
 
+.sidebar-item img {
+  width: 75px;
+  height: 75px;
+}
+
 .inventory-container {
   display: grid;
   grid-template-columns: repeat(8, 100px);

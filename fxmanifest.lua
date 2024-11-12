@@ -14,7 +14,10 @@ files {
     'dist/assets/app.js'
 }
 
-client_script 'core/main.lua'
+client_script {
+    "config/category.lua", 
+    'core/main.lua'
+}
 
 shared_scripts {
 	'@es_extended/imports.lua',

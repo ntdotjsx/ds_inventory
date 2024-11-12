@@ -1,19 +1,17 @@
-import './style.css'
+import './style.css';
+import $ from 'jquery';
 
 const MAX_SLOTS = 25;
+const closeKeys = [27, 84];
+
 const app = document.querySelector<HTMLDivElement>('#app')!;
 app.innerHTML = `
-   <div class="inventory-container" id="inventory"></div>
-`
+   <div class="inventory-container" id="inventory" style="display: none;"></div>
+`;
 
 const inventoryContainer = document.getElementById('inventory');
 
-// สมมุติว่าเรามี array ของ items ที่เก็บข้อมูลไอเทม
-const items = [
-    { name: "Potion", count: 3 },
-    { name: "Painkiller", count: 2 },
-    { name: "Bottle", count: 1 },
-];
+let items = [] as { name: string, count: number }[]; // กำหนดให้ items เป็น array ว่างก่อน
 
 // ฟังก์ชันเพื่อสร้างแต่ละ slot
 function createSlot(i: number, item?: { name: string; count: number }) {
@@ -30,14 +28,10 @@ function createSlot(i: number, item?: { name: string; count: number }) {
         quantity.innerText = `x${item.count}`;
         slot.appendChild(quantity);
 
-
         slot.addEventListener('dragstart', (e) => {
             // เก็บข้อมูลของไอเทมที่ลาก
             e.dataTransfer?.setData('text/plain', JSON.stringify({ index: i }));
         });
-    } else {
-        // ถ้าไม่มีไอเทมในช่องนี้ จะแสดง "Empty Slot"
-        // slot.innerText = 'Empty Slot';
     }
 
     // เพิ่ม event listener สำหรับการวาง (drop) ไอเทม
@@ -77,5 +71,32 @@ function updateInventory() {
     }
 }
 
-// แสดงผลของ inventory
+// ส่งคำสั่งไปยัง Lua เพื่อปิดกระเป๋า
+function closeInventory() {
+    $.post("http://Dust_Inventory/NUIFocusOff", JSON.stringify({
+        type: "normal"
+    }));
+    inventoryContainer!.style.display = 'none'; // ซ่อน UI เมื่อปิด
+}
+
+// ฟังการกดปุ่ม ESC เพื่อปิด UI
+$("body").on("keyup", function (key) {
+    if (closeKeys.includes(key.which)) {
+        closeInventory();
+    }
+});
+
+// รับข้อมูลจาก FiveM ผ่าน NUI
+window.addEventListener('message', (event) => {
+    if (event.data.action === 'showinventory') {
+        // เมื่อได้รับคำสั่ง "showinventory", อัปเดตไอเทมและแสดง UI
+        items = event.data.itemList || []; // รับข้อมูล itemList จาก FiveM
+        updateInventory(); // รีเฟรชการแสดงผล
+
+        // แสดง inventory-container
+        inventoryContainer!.style.display = 'grid'; // ทำให้ inventory-container แสดงขึ้น
+    }
+});
+
+// แสดงผลของ inventory (ตอนเริ่มต้นอาจจะซ่อนอยู่)
 updateInventory();

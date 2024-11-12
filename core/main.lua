@@ -86,11 +86,6 @@ function closeInventory()
     SetNuiFocus(false, false)
 end
 
-RegisterNUICallback('uiLoaded', function(_, cb)
-	clientuiLoaded = true
-	cb(1)
-end)
-
 function GetDataInventory()
     local data = {}
     local fastItems = {}

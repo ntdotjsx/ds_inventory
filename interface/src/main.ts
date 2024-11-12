@@ -13,21 +13,62 @@ const items = [
     { name: "Health Potion", count: 3 },
     { name: "Mana Potion", count: 2 },
     { name: "Sword", count: 1 },
-    // สามารถเพิ่มไอเทมอื่นๆ ได้
 ];
 
-// สร้าง slot ตามจำนวน MAX_SLOTS
-for (let i = 0; i < MAX_SLOTS; i++) {
+// ฟังก์ชันเพื่อสร้างแต่ละ slot
+function createSlot(i: number, item?: { name: string; count: number }) {
     const slot = document.createElement('div');
     slot.classList.add('slot');
-    
-    // ตรวจสอบว่ามีไอเทมในช่องนี้หรือไม่
-    if (i < items.length) {
-        const item = items[i];
-        slot.innerText = `${item.name} x${item.count}`;  // แสดงชื่อและจำนวนของไอเทม
+
+    // ถ้ามีไอเทมในช่องนี้
+    if (item && item.name !== "") {
+        slot.innerText = `${item.name} x${item.count}`;
+        slot.setAttribute('draggable', 'true');
+        slot.addEventListener('dragstart', (e) => {
+            // เก็บข้อมูลของไอเทมที่ลาก
+            e.dataTransfer?.setData('text/plain', JSON.stringify({ index: i }));
+        });
     } else {
-        // slot.innerText = 'Empty Slot';  // ถ้าไม่มีไอเทมให้แสดงข้อความ "Empty Slot"
+        // ถ้าไม่มีไอเทมในช่องนี้ จะแสดง "Empty Slot"
+        // slot.innerText = 'Empty Slot';
     }
-    
-    inventoryContainer?.appendChild(slot);
+
+    // เพิ่ม event listener สำหรับการวาง (drop) ไอเทม
+    slot.addEventListener('dragover', (e) => {
+        e.preventDefault(); // ทำให้สามารถวางได้
+    });
+
+    slot.addEventListener('drop', (e) => {
+        e.preventDefault();
+        const data = e.dataTransfer?.getData('text/plain');
+        if (data) {
+            const draggedItem = JSON.parse(data);
+            const draggedItemIndex = draggedItem.index;
+            
+            // ถ้าเป็น slot ที่ว่างอยู่ (Empty Slot)
+            if (!item || item.name === "") {
+                // เปลี่ยนข้อมูลของ slot นี้ให้มีไอเทมจากช่องที่ลากมา
+                items[i] = items[draggedItemIndex];
+                items[draggedItemIndex] = { name: "", count: 0 }; // เคลียร์ข้อมูลไอเทมในช่องต้นทาง
+            }
+
+            // รีเฟรช inventory เพื่ออัพเดต UI
+            updateInventory();
+        }
+    });
+
+    return slot;
 }
+
+// ฟังก์ชันเพื่อรีเฟรชการแสดงผลของ inventory
+function updateInventory() {
+    inventoryContainer!.innerHTML = ''; // ลบสิ่งที่มีอยู่ใน inventory
+    for (let i = 0; i < MAX_SLOTS; i++) {
+        // ถ้า items[i] ไม่มีข้อมูล (empty slot) ก็จะเป็นช่องว่าง
+        const slot = createSlot(i, items[i] && items[i].name !== "" ? items[i] : undefined);
+        inventoryContainer?.appendChild(slot);
+    }
+}
+
+// แสดงผลของ inventory
+updateInventory();

@@ -1,23 +1,59 @@
-.inventory {
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.inventory-container {
   display: grid;
   grid-template-columns: repeat(5, 100px);
   gap: 10px;
-  padding: 20px;
   background-color: #333;
-  border-radius: 8px;
+  padding: 20px;
+  border-radius: 10px;
+  /* width: 400px; */
   width: max-content;
+  color: white;
 }
-.slot {
+
+.item-slot {
+  position: relative;
   width: 100px;
   height: 100px;
   background-color: #444;
   border: 2px solid #555;
   border-radius: 5px;
+  padding: 10px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  position: relative;
-  color: white;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.item-slot:hover {
+  transform: scale(1.05);
+}
+
+.item-slot img {
+  width: 40px;
+  height: 40px;
+}
+
+.quantity {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 2px 5px;
+  border-radius: 3px;
   font-size: 0.8em;
-  text-align: center;
 }

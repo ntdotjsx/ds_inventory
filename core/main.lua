@@ -318,3 +318,10 @@ function GetDataInventory()
     end
     return data, currentWeight, fastItems
 end
+
+RegisterNUICallback(
+    "UseItem",
+    function(data, cb)
+        TriggerServerEvent("esx:useItem", data.itemName)
+    cb("ok")
+end)

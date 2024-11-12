@@ -1,15 +1,34 @@
 import './style.css';
 import $ from 'jquery';
 
-const MAX_SLOTS = 25;
+const MAX_SLOTS = 48;
 const closeKeys = [27, 84];
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 app.innerHTML = `
-   <div class="inventory-container" id="inventory" style="display: none;"></div>
+   <div class="inventory-wrapper" id="wrapper">
+    <div class="sidebar">
+        <div class="sidebar-item">1</div>
+        <div class="sidebar-item">2</div>
+        <div class="sidebar-item">3</div>
+        <div class="sidebar-item">4</div>
+        <div class="sidebar-item">5</div>
+        <div class="sidebar-item">6</div>
+        <div class="sidebar-item">7</div>
+    </div>
+
+    <div class="inventory-content">
+        <div class="inventory-header">
+            <h1 class="inventory-title">INVENTORY</h1>
+            <span class="player-name">[Player Name]</span>
+        </div>
+        <div class="inventory-container" id="inventory"></div>
+    </div>
+</div>
 `;
 
 const inventoryContainer = document.getElementById('inventory');
+const inventoryWrapper = document.getElementById('wrapper');
 
 let items = [] as { name: string, count: number }[]; // กำหนดให้ items เป็น array ว่างก่อน
 
@@ -20,7 +39,12 @@ function createSlot(i: number, item?: { name: string; count: number }) {
 
     // ถ้ามีไอเทมในช่องนี้
     if (item && item.name !== "") {
-        slot.innerText = `${item.name}`;
+        const img = document.createElement('img');
+        img.src = `/img/items/${item.name}.png`;
+        img.alt = item.name;
+        img.classList.add('item-image'); // กำหนดคลาสเพื่อใช้กับ CSS ถ้าต้องการ
+
+        slot.appendChild(img); // เพิ่มรูปภาพเข้าไปใน slot
         slot.setAttribute('draggable', 'true');
 
         const quantity = document.createElement('div');
@@ -28,44 +52,47 @@ function createSlot(i: number, item?: { name: string; count: number }) {
         quantity.innerText = `x${item.count}`;
         slot.appendChild(quantity);
 
+        // เพิ่ม event listener สำหรับการลาก (drag) ไอเทม
         slot.addEventListener('dragstart', (e) => {
-            // เก็บข้อมูลของไอเทมที่ลาก
             e.dataTransfer?.setData('text/plain', JSON.stringify({ index: i }));
+        });
+
+        // ฟังก์ชันการแสดง context menu เมื่อคลิกขวาที่ item
+        slot.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            
+            // เปลี่ยนเนื้อหาของ slot เป็นปุ่ม "Use"
+            slot.innerHTML = `<button class="use-button">Use</button>`;
+
+            // ฟังก์ชันเมื่อกดปุ่ม Use
+            slot.querySelector('.use-button')?.addEventListener('click', () => {
+                useItem(i); // เรียกใช้ฟังก์ชัน useItem
+                updateInventory(); // รีเฟรชการแสดงผลของ inventory
+            });
+
+            // ลบเมนูเมื่อคลิกที่ส่วนอื่นๆ
+            document.addEventListener('click', () => {
+                updateInventory(); // รีเฟรชเมื่อคลิกที่ส่วนอื่น
+            }, { once: true });
         });
     }
 
-    // เพิ่ม event listener สำหรับการวาง (drop) ไอเทม
-    slot.addEventListener('dragover', (e) => {
-        e.preventDefault(); // ทำให้สามารถวางได้
-
-        // ถ้าคือช่องที่มีไอเทมหรือช่องที่ว่าง ไม่สามารถวางได้
-        if (!item || item.name === "") {
-            e.stopPropagation(); // หยุดการไหลของ event ถ้าช่องว่าง (Empty Slot)
-        }
-    });
-
-    slot.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const data = e.dataTransfer?.getData('text/plain');
-        if (data) {
-            // const draggedItem = JSON.parse(data);
-            // const draggedItemIndex = draggedItem.index;
-
-            // ถ้า slot ปลายทางไม่มีไอเทม (Empty Slot) หรือช่องว่าง
-            if (!item || item.name === "") {
-                e.stopPropagation(); // หยุดการทำงานไม่ให้ทำการวาง
-            }
-        }
-    });
-
     return slot;
+}
+
+// ฟังก์ชันเมื่อกดปุ่ม Use
+function useItem(index: number) {
+    const item = items[index];
+    if (item) {
+        // console.log(`Using item: ${item.name}`);
+        $.post("http://Dust_Inventory/UseItem", JSON.stringify({ itemName: item.name }));
+    }
 }
 
 // ฟังก์ชันเพื่อรีเฟรชการแสดงผลของ inventory
 function updateInventory() {
     inventoryContainer!.innerHTML = ''; // ลบสิ่งที่มีอยู่ใน inventory
     for (let i = 0; i < MAX_SLOTS; i++) {
-        // ถ้า items[i] ไม่มีข้อมูล (empty slot) ก็จะเป็นช่องว่าง
         const slot = createSlot(i, items[i] && items[i].name !== "" ? items[i] : undefined);
         inventoryContainer?.appendChild(slot);
     }
@@ -76,10 +103,11 @@ function closeInventory() {
     $.post("http://Dust_Inventory/NUIFocusOff", JSON.stringify({
         type: "normal"
     }));
-    inventoryContainer!.style.display = 'none'; // ซ่อน UI เมื่อปิด
+    inventoryContainer!.style.display = 'none';
+    inventoryWrapper!.style.display = 'none';
 }
 
-// ฟังการกดปุ่ม ESC เพื่อปิด UI
+// ฟังการกดปุ่ม เพื่อปิด UI
 $("body").on("keyup", function (key) {
     if (closeKeys.includes(key.which)) {
         closeInventory();
@@ -89,14 +117,14 @@ $("body").on("keyup", function (key) {
 // รับข้อมูลจาก FiveM ผ่าน NUI
 window.addEventListener('message', (event) => {
     if (event.data.action === 'showinventory') {
-        // เมื่อได้รับคำสั่ง "showinventory", อัปเดตไอเทมและแสดง UI
-        items = event.data.itemList || []; // รับข้อมูล itemList จาก FiveM
-        updateInventory(); // รีเฟรชการแสดงผล
+        items = event.data.itemList || [];
+        updateInventory();
 
-        // แสดง inventory-container
-        inventoryContainer!.style.display = 'grid'; // ทำให้ inventory-container แสดงขึ้น
+        inventoryContainer!.style.display = 'grid';
+    }
+    if (event.data.type === "normal") {
+        inventoryWrapper!.style.display = 'flex';
     }
 });
 
-// แสดงผลของ inventory (ตอนเริ่มต้นอาจจะซ่อนอยู่)
 updateInventory();

@@ -1,4 +1,12 @@
-* {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -125,3 +133,27 @@ body {
 .use-button:hover {
   background-color: #45a049;
 }
+
+</style>
+<body>
+    <div class="inventory-wrapper" id="wrapper">
+        <div class="sidebar">
+            <div class="sidebar-item">1</div>
+            <div class="sidebar-item">2</div>
+            <div class="sidebar-item">3</div>
+            <div class="sidebar-item">4</div>
+            <div class="sidebar-item">5</div>
+            <div class="sidebar-item">6</div>
+            <div class="sidebar-item">7</div>
+        </div>
+    
+        <div class="inventory-content">
+            <div class="inventory-header">
+                <h1 class="inventory-title">INVENTORY</h1>
+                <span class="player-name">[Player Name]</span>
+            </div>
+            <div class="inventory-container" id="inventory"></div>
+        </div>
+    </div>
+</body>
+</html>

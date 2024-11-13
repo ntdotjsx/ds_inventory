@@ -7,15 +7,14 @@ let currentUseSlot = null; // เก็บช่อง item ที่มีป�
 
 // ตัวอย่างรายการไอเทม
 let items = [
-    { name: "Health Potion", count: 3 },
-    { name: "Mana Potion", count: 2 },
-    { name: "Sword", count: 1 },
-    { name: "Potion", count: 3 },
-    { name: "Painkiller", count: 2 },
-    { name: "Bottle", count: 1 },
+    { name: "idcard", count: 1, canUse: true },
+    { name: "work_card", count: 2, canUse: false, canGive: true },
+    { name: "Phone", count: 3, canUse: false, canDrop: true, canGive: true },
+    { name: "basic_fail", count: 1, canUse: false, canDrop: true, canGive: true },
+    { name: "Painkiller", count: 2, canUse: true, canDrop: true, canGive: true },
+    { name: "weapon_bottlex", count: 1, canChangeSkin: true },
 ];
 
-// ฟังก์ชันเพื่อสร้างแต่ละ slot
 // ฟังก์ชันเพื่อสร้างแต่ละ slot
 function createSlot(i, item) {
     const slot = document.createElement('div');
@@ -53,15 +52,16 @@ function createSlot(i, item) {
             tooltip.style.display = 'none';
         });
 
-        // เพิ่ม event listener สำหรับคลิกขวาเพื่อแสดง/ซ่อนปุ่ม use
+        // เพิ่ม event listener สำหรับคลิกขวาเพื่อแสดง/ซ่อนปุ่ม use และ drop
         slot.addEventListener('contextmenu', (e) => {
             e.preventDefault();  // ป้องกัน context menu ปกติไม่ให้แสดง
 
-            // ตรวจสอบว่าช่องนี้มีปุ่ม use อยู่แล้วหรือไม่
+            // ตรวจสอบว่าช่องนี้มีปุ่มอยู่แล้วหรือไม่
             if (currentUseSlot === slot) {
-                // ซ่อนปุ่ม use ถ้ามีการคลิกขวาที่ item เดิมซ้ำ
+                // ซ่อนปุ่ม use และ drop ถ้ามีการคลิกขวาที่ item เดิมซ้ำ
                 currentUseSlot = null;
-                slot.innerHTML = '';
+                slot.innerHTML = ''; // ลบปุ่มออก
+
                 const oldImg = document.createElement('img');
                 oldImg.src = `/img/items/${item.name}.png`;
                 oldImg.alt = item.name;
@@ -99,31 +99,76 @@ function createSlot(i, item) {
             currentUseSlot = slot;
             slot.dataset.index = i;
 
-            // ล้างเนื้อหาภายใน slot ปัจจุบัน
-            slot.innerHTML = '';
+            slot.innerHTML = '';  // ล้างเนื้อหาภายใน slot
 
-            // สร้างปุ่ม use
-            const useButton = document.createElement('button');
-            useButton.classList.add('use-button');
-            useButton.innerText = 'Use';
+            const buttonsContainer = document.createElement('div');
+            buttonsContainer.classList.add('item-buttons');
 
-            // เพิ่ม event เมื่อคลิกที่ปุ่ม use
-            useButton.addEventListener('click', () => {
-                useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
-                updateInventory();  // อัพเดต inventory เพื่อคืนภาพและจำนวน
-                currentUseSlot = null;
-            });
+            // ถ้าไอเทมสามารถใช้ได้
+            if (item.canChangeSkin) {
+                const ChangeSkin = document.createElement('button');
+                ChangeSkin.innerText = 'Change';
 
-            // เพิ่มปุ่ม use ใน slot
-            slot.appendChild(useButton);
+                ChangeSkin.addEventListener('click', () => {
+                    useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
+                    updateInventory();  // อัพเดต inventory เพื่อคืนภาพและจำนวน
+                    currentUseSlot = null;
+                });
 
-            // ซ่อน tooltip เมื่อคลิกขวา
+                buttonsContainer.appendChild(ChangeSkin);
+            }
+
+            // ถ้าไอเทมสามารถใช้ได้
+            if (item.canUse) {
+                const useButton = document.createElement('button');
+                useButton.innerText = 'Use';
+
+                useButton.addEventListener('click', () => {
+                    useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
+                    updateInventory();  // อัพเดต inventory เพื่อคืนภาพและจำนวน
+                    currentUseSlot = null;
+                });
+
+                buttonsContainer.appendChild(useButton);
+            }
+
+            // ถ้าไอเทมสามารถทิ้งได้
+            if (item.canGive) {
+                const giveButton = document.createElement('button');
+                giveButton.innerText = 'Give';
+
+                giveButton.addEventListener('click', () => {
+                    useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
+                    updateInventory();  // อัพเดต inventory เพื่อคืนภาพและจำนวน
+                    currentUseSlot = null;
+                });
+
+                buttonsContainer.appendChild(giveButton);
+            }
+
+            // ถ้าไอเทมสามารถทิ้งได้
+            if (item.canDrop) {
+                const dropButton = document.createElement('button');
+                dropButton.innerText = 'Drop';
+
+                dropButton.addEventListener('click', () => {
+                    useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
+                    updateInventory();  // อัพเดต inventory เพื่อคืนภาพและจำนวน
+                    currentUseSlot = null;
+                });
+
+                buttonsContainer.appendChild(dropButton);
+            }
+
+            // เพิ่มปุ่มทั้งสองใน slot
+            slot.appendChild(buttonsContainer);
             tooltip.style.display = 'none';
         });
     }
 
     return slot;
 }
+
 
 function makeDraggables() {
     for (let i = 1; i <= 7; i++) {

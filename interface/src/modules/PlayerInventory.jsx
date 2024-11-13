@@ -25,7 +25,13 @@ export default function PlayerInventory() {
                         <h1 className="inventory-title">INVENTORY</h1>
                         <span className="player-name">[Player Name]</span>
                     </div>
-                    <div className="inventory-container" id="inventory"></div>
+                    <div className="inventory-container" id="inventory">
+                        <div className="key-container" id="keySlot"></div>
+                    </div>
+
+                    <div className="inventory-footer">
+                        <h1 className="inventory-title">DustCity</h1>
+                    </div>
                 </div>
             </div>
 

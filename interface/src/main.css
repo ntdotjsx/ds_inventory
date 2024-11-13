@@ -95,9 +95,9 @@ body {
     transition: transform 0.1s;
 }
 
-.item-slot:hover {
+/* .item-slot:hover {
     transform: scale(1.05);
-}
+} */
 
 .item-slot img {
     width: 75px;
@@ -125,4 +125,17 @@ body {
 
 .use-button:hover {
     background-color: #45a049;
+}
+
+.tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 0.9em;
+    display: none;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 10;
 }

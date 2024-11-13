@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import '../functions/inventory'
+import { updateInventory } from '../functions/inventory';
 
 export default function PlayerInventory() {
+    useEffect(() => {
+        updateInventory();
+    }, []);
     return (
         <>
 
@@ -24,6 +28,8 @@ export default function PlayerInventory() {
                     <div className="inventory-container" id="inventory"></div>
                 </div>
             </div>
+
+            <div className="tooltip" id="tooltip"></div>
         </>
     )
 }

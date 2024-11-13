@@ -11,13 +11,13 @@ export default function PlayerInventory() {
 
             <div className="inventory-wrapper" id="wrapper">
                 <div className="sidebar">
-                    <div className="sidebar-item">1</div>
-                    <div className="sidebar-item">2</div>
-                    <div className="sidebar-item">3</div>
-                    <div className="sidebar-item">4</div>
-                    <div className="sidebar-item">5</div>
-                    <div className="sidebar-item">6</div>
-                    <div className="sidebar-item">7</div>
+                    <div className="sidebar-item" data-slot="1">1</div>
+                    <div className="sidebar-item" data-slot="2">2</div>
+                    <div className="sidebar-item" data-slot="3">3</div>
+                    <div className="sidebar-item" data-slot="4">4</div>
+                    <div className="sidebar-item" data-slot="5">5</div>
+                    <div className="sidebar-item" data-slot="6">6</div>
+                    <div className="sidebar-item" data-slot="7">7</div>
                 </div>
 
                 <div className="inventory-content">

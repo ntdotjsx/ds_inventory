@@ -107,7 +107,7 @@ function createSlot(i, item) {
             // ถ้าไอเทมสามารถใช้ได้
             if (item.canChangeSkin) {
                 const ChangeSkin = document.createElement('button');
-                ChangeSkin.innerText = 'Change';
+                ChangeSkin.innerText = 'เปลี่ยน';
 
                 ChangeSkin.addEventListener('click', () => {
                     useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
@@ -121,7 +121,7 @@ function createSlot(i, item) {
             // ถ้าไอเทมสามารถใช้ได้
             if (item.canUse) {
                 const useButton = document.createElement('button');
-                useButton.innerText = 'Use';
+                useButton.innerText = 'ใช้';
 
                 useButton.addEventListener('click', () => {
                     useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
@@ -135,7 +135,7 @@ function createSlot(i, item) {
             // ถ้าไอเทมสามารถทิ้งได้
             if (item.canGive) {
                 const giveButton = document.createElement('button');
-                giveButton.innerText = 'Give';
+                giveButton.innerText = 'มอบ';
 
                 giveButton.addEventListener('click', () => {
                     useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
@@ -149,7 +149,7 @@ function createSlot(i, item) {
             // ถ้าไอเทมสามารถทิ้งได้
             if (item.canDrop) {
                 const dropButton = document.createElement('button');
-                dropButton.innerText = 'Drop';
+                dropButton.innerText = 'ทิ้ง';
 
                 dropButton.addEventListener('click', () => {
                     useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน

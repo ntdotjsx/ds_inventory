@@ -10,20 +10,27 @@ export default function PlayerInventory() {
         <>
 
             <div className="inventory-wrapper" id="wrapper">
-                <div className="sidebar">
-                    <div className="sidebar-item" data-slot="1">1</div>
-                    <div className="sidebar-item" data-slot="2">2</div>
-                    <div className="sidebar-item" data-slot="3">3</div>
-                    <div className="sidebar-item" data-slot="4">4</div>
-                    <div className="sidebar-item" data-slot="5">5</div>
-                    <div className="sidebar-item" data-slot="6">6</div>
-                    <div className="sidebar-item" data-slot="7">7</div>
+                <div className="outside">
+                    <div className="sidebar">
+                        <div className="sidebar-item" data-slot="1">1</div>
+                        <div className="sidebar-item" data-slot="2">2</div>
+                        <div className="sidebar-item" data-slot="3">3</div>
+                        <div className="sidebar-item" data-slot="4">4</div>
+                        <div className="sidebar-item" data-slot="5">5</div>
+                        <div className="sidebar-item" data-slot="6">6</div>
+                        <div className="sidebar-item" data-slot="7">7</div>
+                        <div className="fast-change">
+                            <button>ซ้าย</button>
+                            <input className='fast-change-input' type="number" />
+                            <button>ขวา</button>
+                        </div>
+                    </div>
                 </div>
 
                 <div className="inventory-content">
                     <div className="inventory-header">
                         <h1 className="inventory-title">INVENTORY</h1>
-                        <span className="player-name">[Player Name]</span>
+                        <span className="player-name">ช่องเก็บของ [Nutto Donovanly]</span>
                     </div>
                     <div className="inventory-container" id="inventory">
                         <div className="key-container" id="keySlot"></div>

@@ -1,32 +1,43 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.js',  // พาธไปยังไฟล์เริ่มต้นของคุณ
+  entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),  // พาธที่ Webpack จะนำไฟล์ไปวางหลัง bundle
-    filename: 'bundle.js',  // ชื่อไฟล์ที่สร้างจากการ bundle
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js',
   },
   module: {
     rules: [
       {
-        test: /\.js$/,  // ใช้ Babel แปลงไฟล์ .js
+        test: /\.jsx?$/,  // ใช้ regex เพื่อแปลงทั้ง .js และ .jsx
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],  // สำหรับ React และ ES6+
+            presets: ['@babel/preset-env', '@babel/preset-react'],  // สำหรับ React และ JSX
           },
         },
       },
       {
-        test: /\.css$/,  // ใช้ loader สำหรับไฟล์ .css
+        test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
     ],
   },
-  devServer: {
-    contentBase: path.join(__dirname, 'dist'),  // พาธไปยังไฟล์ที่ต้องการให้ Webpack Dev Server ใช้งาน
-    compress: true,  // เปิดการบีบอัดไฟล์
-    port: 9000,  // พอร์ตสำหรับการรัน server
+  resolve: {
+    extensions: ['.js', '.jsx'],  // เพิ่ม .jsx ในการ resolve
   },
+  devServer: {
+    static: path.join(__dirname, 'dist'),  // ใช้ static แทน contentBase
+    compress: true,
+    port: 9000,
+    open: true,  // เปิด browser อัตโนมัติเมื่อเริ่ม dev server
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.html',
+    }),
+  ],
+  mode: 'development',  // เพิ่มการตั้งค่านี้
 };

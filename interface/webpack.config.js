@@ -1,10 +1,11 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, '../dist'),
     filename: 'bundle.js',
   },
   module: {
@@ -15,7 +16,7 @@ module.exports = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],  // สำหรับ React และ JSX
+            presets: ['@babel/preset-env', '@babel/preset-react'],
           },
         },
       },
@@ -26,18 +27,22 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'],  // เพิ่ม .jsx ในการ resolve
+    extensions: ['.js', '.jsx'],
   },
   devServer: {
-    static: path.join(__dirname, 'dist'),  // ใช้ static แทน contentBase
+    static: path.join(__dirname, 'dist'),
     compress: true,
     port: 9000,
-    open: true,  // เปิด browser อัตโนมัติเมื่อเริ่ม dev server
+    open: true,
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './src/index.html',
     }),
+    new webpack.ProvidePlugin({
+      $: 'jquery',  // ทำให้ jQuery สามารถใช้ได้ทั่วทั้งโปรเจกต์
+      jQuery: 'jquery',
+    }),
   ],
-  mode: 'development',  // เพิ่มการตั้งค่านี้
+  mode: 'development',
 };

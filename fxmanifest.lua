@@ -10,8 +10,8 @@ ui_page 'dist/index.html'
 
 files {
     'dist/index.html',
-    'dist/assets/index.css',
-    'dist/assets/app.js',
+    'dist/index.css',
+    'dist/bundle.js',
     "img/**",
 	'img/*.png',
 	'img/*.gif',

@@ -240,6 +240,11 @@ body {
     cursor: pointer;
 }
 
+.item-image {
+    width: 75px;
+    height: 75px;
+}
+
 .fast-change button:hover {
     background-color: #161616;
     transform: scale(1.1); /* ขยายปุ่มเล็กน้อยเมื่อ hover */

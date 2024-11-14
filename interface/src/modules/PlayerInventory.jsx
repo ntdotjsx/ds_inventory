@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import '../functions/inventory'
+import KeySlot from './KeySlot';
 import { updateInventory } from '../functions/inventory';
 
 export default function PlayerInventory() {
@@ -32,13 +33,14 @@ export default function PlayerInventory() {
                         <h1 className="inventory-title">INVENTORY</h1>
                         <span className="player-name">ช่องเก็บของ [Nutto Donovanly]</span>
                     </div>
-                    <div className="inventory-container" id="inventory">
-                        <div className="key-container" id="keySlot"></div>
+                    <div className="main-container">
+                        <div className="inventory-container" id="inventory"> </div>
+                        <KeySlot />
                     </div>
-
                     <div className="inventory-footer">
                         <h1 className="inventory-title">DustCity</h1>
                     </div>
+
                 </div>
             </div>
 

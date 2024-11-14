@@ -226,7 +226,7 @@ body {
 }
 
 .fast-change button {
-    background-color: #2d2f34;
+    background-color: #000000e3;
     width: 30px;
     height: 25px;
     border: none;
@@ -241,7 +241,7 @@ body {
 }
 
 .fast-change button:hover {
-    background-color: #66a3ff;
+    background-color: #161616;
     transform: scale(1.1); /* ขยายปุ่มเล็กน้อยเมื่อ hover */
 }
 

@@ -234,4 +234,9 @@ function useItem(index) {
         $.post("http://Dust_Inventory/UseItem", JSON.stringify({ itemName: item.name }));
     }
 }
-//ih
+
+$("body").on("keyup", function (key) {
+    if (closeKeys.includes(key.which)) {
+        closeInventory();
+    }
+});

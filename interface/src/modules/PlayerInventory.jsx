@@ -38,7 +38,7 @@ export default function PlayerInventory() {
                         <KeySlot />
                     </div>
                     <div className="inventory-footer">
-                        <h1 className="inventory-title">DustCity</h1>
+                        <h1 className="inventory-title">EasyStore</h1>
                     </div>
 
                 </div>

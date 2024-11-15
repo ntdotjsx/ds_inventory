@@ -16,6 +16,18 @@ let items = [
     { name: "weapon_bottlex", count: 1, canChangeSkin: true },
 ];
 
+// ฟังก์ชันในการสร้างปุ่ม
+function createItemButton(label, action) {
+    const button = document.createElement('button');
+    button.innerText = label;
+    button.addEventListener('click', () => {
+        action();  // เรียกฟังก์ชันที่เกี่ยวข้อง
+        updateInventory();  // อัพเดต inventory
+        currentUseSlot = null;
+    });
+    return button;
+}
+
 // ฟังก์ชันเพื่อสร้างแต่ละ slot
 function createSlot(i, item) {
     const slot = document.createElement('div');
@@ -28,8 +40,10 @@ function createSlot(i, item) {
         img.src = `/img/items/${item.name}.png`;
         img.alt = item.name;
         img.classList.add('item-image');
+        slot.appendChild(img);
 
-        slot.appendChild(img); // เพิ่มรูปภาพเข้าไปใน slot
+        // console.log(item.name, item.canUse)
+
         const quantity = document.createElement('div');
         quantity.classList.add('quantity');
         quantity.innerText = `x${item.count}`;
@@ -61,7 +75,6 @@ function createSlot(i, item) {
             if (currentUseSlot === slot) {
                 currentUseSlot = null;
                 slot.innerHTML = ''; // ลบปุ่มออก
-
                 const oldImg = document.createElement('img');
                 oldImg.src = `/img/items/${item.name}.png`;
                 oldImg.alt = item.name;
@@ -98,69 +111,32 @@ function createSlot(i, item) {
             // อัปเดตช่องที่มีปุ่ม use ปัจจุบัน
             currentUseSlot = slot;
             slot.dataset.index = i;
-
             slot.innerHTML = '';  // ล้างเนื้อหาภายใน slot
 
             const buttonsContainer = document.createElement('div');
             buttonsContainer.classList.add('item-buttons');
 
-            // ถ้าไอเทมสามารถใช้ได้
+            // ถ้าไอเทมสามารถเปลี่ยนสกินได้
             if (item.canChangeSkin) {
-                const ChangeSkin = document.createElement('button');
-                ChangeSkin.innerText = 'เปลี่ยน';
-
-                ChangeSkin.addEventListener('click', () => {
-                    useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
-                    updateInventory();  // อัพเดต inventory เพื่อคืนภาพและจำนวน
-                    currentUseSlot = null;
-                });
-
-                buttonsContainer.appendChild(ChangeSkin);
+                buttonsContainer.appendChild(createItemButton('เปลี่ยน', () => useItem(i)));
             }
 
             // ถ้าไอเทมสามารถใช้ได้
             if (item.canUse) {
-                const useButton = document.createElement('button');
-                useButton.innerText = 'ใช้';
-
-                useButton.addEventListener('click', () => {
-                    useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
-                    updateInventory();  // อัพเดต inventory เพื่อคืนภาพและจำนวน
-                    currentUseSlot = null;
-                });
-
-                buttonsContainer.appendChild(useButton);
+                buttonsContainer.appendChild(createItemButton('ใช้', () => useItem(i)));
             }
 
-            // ถ้าไอเทมสามารถทิ้งได้
+            // ถ้าไอเทมสามารถมอบได้
             if (item.canGive) {
-                const giveButton = document.createElement('button');
-                giveButton.innerText = 'มอบ';
-
-                giveButton.addEventListener('click', () => {
-                    useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
-                    updateInventory();  // อัพเดต inventory เพื่อคืนภาพและจำนวน
-                    currentUseSlot = null;
-                });
-
-                buttonsContainer.appendChild(giveButton);
+                buttonsContainer.appendChild(createItemButton('มอบ', () => useItem(i)));
             }
 
             // ถ้าไอเทมสามารถทิ้งได้
             if (item.canDrop) {
-                const dropButton = document.createElement('button');
-                dropButton.innerText = 'ทิ้ง';
-
-                dropButton.addEventListener('click', () => {
-                    useItem(i);  // เรียกใช้ไอเทมตาม index ของมัน
-                    updateInventory();  // อัพเดต inventory เพื่อคืนภาพและจำนวน
-                    currentUseSlot = null;
-                });
-
-                buttonsContainer.appendChild(dropButton);
+                buttonsContainer.appendChild(createItemButton('ทิ้ง', () => useItem(i)));
             }
 
-            // เพิ่มปุ่มทั้งสองใน slot
+            // เพิ่มปุ่มทั้งหมดใน slot
             slot.appendChild(buttonsContainer);
             tooltip.style.display = 'none';
         });
@@ -214,7 +190,7 @@ function makeSidebarDroppables() {
             $(this).find('.item-image').remove();
 
             // ซ่อนตัวเลขในช่องนั้นเมื่อวางไอเท็ม
-            $(this).contents().filter(function() {
+            $(this).contents().filter(function () {
                 return this.nodeType === 3; // ตัวเลขเป็น text node
             }).wrap('<span class="hidden-text"></span>');
 

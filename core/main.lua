@@ -26,6 +26,22 @@ fastItems = {}
 fastitem = nil
 FastNum = 1
 weaponsiv = {}
+Config = {}
+
+-- ความสามารถที่ไอเทมสามารถทำได้
+Config.Caenble = {
+    ["use"] = {
+        "painkiller", 
+        "idcard", 
+    },
+    ["give"] = {
+        "painkiller",  
+    },
+    ["drop"] = {
+        "painkiller",
+    }
+}
+
 
 local fastWeapons = {
     [1] = {
@@ -58,20 +74,68 @@ Citizen.CreateThread(function()
     end
 end)
 
+-- ฟังก์ชันตรวจสอบความสามารถที่ไอเทมสามารถทำได้
+function getItemCapabilities(itemName)
+    local capabilities = {
+        canUse = false,
+        canGive = false,
+        canDrop = false,
+    }
+
+    -- ตรวจสอบว่าไอเทมสามารถใช้ได้หรือไม่
+    for _, v in ipairs(Config.Caenble.use) do
+        if v == itemName then
+            capabilities.canUse = true
+            break
+        end
+    end
+
+    -- ตรวจสอบว่าไอเทมสามารถมอบได้หรือไม่
+    for _, v in ipairs(Config.Caenble.give) do
+        if v == itemName then
+            capabilities.canGive = true
+            break
+        end
+    end
+
+    -- ตรวจสอบว่าไอเทมสามารถทิ้งได้หรือไม่
+    for _, v in ipairs(Config.Caenble.drop) do
+        if v == itemName then
+            capabilities.canDrop = true
+            break
+        end
+    end
+
+    return capabilities
+end
+
+-- ฟังก์ชันในการเปิด Inventory
 function openInventory()
     ESX.PlayerData = ESX.GetPlayerData()
     local item = GetDataInventory()
-    -- local DustData = {
-    --     id = GetPlayerServerId(PlayerId()),
-    --     money = Get_Money(),
-    -- }
+    local itemList = {}
+    for _, invItem in ipairs(item) do
+        local capabilities = getItemCapabilities(invItem.name)
+
+        -- ข้อมูลไอเทมที่ส่งไปยัง UI
+        local itemData = {
+            name = invItem.name,
+            label = invItem.label,
+            count = invItem.count,
+            canUse = capabilities.canUse,
+            canGive = capabilities.canGive,
+            canDrop = capabilities.canDrop,
+        }
+        table.insert(itemList, itemData)
+    end
+
     SendNUIMessage({
-        action = "showinventory",  -- การกระทำที่ UI จะทำเมื่อได้รับข้อมูลนี้
+        action = "showinventory",
         type = "normal",
-        itemList = item,  -- รายการไอเทม
-        -- Data = DustData,  -- ข้อมูลของผู้เล่น
+        itemList = itemList,
     })
-    SetNuiFocus(true, true)  -- เปิด Focus ไปที่ UI
+
+    SetNuiFocus(true, true)
 end
 
 RegisterNUICallback("NUIFocusOff",function()
@@ -245,26 +309,26 @@ function GetDataInventory()
         end
     end
 
-    for k, v in pairs(data) do
-        local founditem = false
-        for category, value in pairs(Config.Category) do
-            for index, data in pairs(value) do
-                if Config.Category[category][index] == v.name then
-                    v.category = category;
-                    founditem = true
-                    break
-                end
-            end
-        end
+    -- for k, v in pairs(data) do
+    --     local founditem = false
+    --     for category, value in pairs(Config.Category) do
+    --         for index, data in pairs(value) do
+    --             if Config.Category[category][index] == v.name then
+    --                 v.category = category;
+    --                 founditem = true
+    --                 break
+    --             end
+    --         end
+    --     end
 
-        if founditem == false then
-            if data[k].type == "item_key" or data[k].type == "item_keyhouse" then
-                data[k].category = "inventory_keys";
-            elseif data[k].type == "item_weapon" then
-                data[k].category = "fighting";
-            end
-        end
-    end
+    --     if founditem == false then
+    --         if data[k].type == "item_key" or data[k].type == "item_keyhouse" then
+    --             data[k].category = "inventory_keys";
+    --         elseif data[k].type == "item_weapon" then
+    --             data[k].category = "fighting";
+    --         end
+    --     end
+    -- end
 
     if fastWeapons[FastNum] ~= nil then
         for slot, item in pairs(fastWeapons[FastNum]) do

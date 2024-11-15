@@ -234,4 +234,32 @@ function useItem(index) {
         $.post("http://Dust_Inventory/UseItem", JSON.stringify({ itemName: item.name }));
     }
 }
-//ih
+
+$("body").on("keyup", function (key) {
+    if (closeKeys.includes(key.which)) {
+        closeInventory();
+    }
+});
+
+// ฟังก์ชันสำหรับปิดอินเวนทอรี
+function closeInventory() {
+    $.post("http://Dust_Inventory/NUIFocusOff", JSON.stringify({
+        type: "normal"
+    }));
+    $("#inventory").hide();
+    $("#wrapper").hide();
+}
+
+// ฟังก์ชันสำหรับรับข้อมูลจากเซิร์ฟเวอร์ (ผ่าน message)
+window.addEventListener('message', (event) => {
+    if (event.data.action === 'showinventory') {
+        items = event.data.itemList || [];  // รับรายการไอเทมจากเซิร์ฟเวอร์
+        updateInventory();  // อัพเดตอินเวนทอรี
+
+        $("#inventory").show();  // แสดงอินเวนทอรี
+    }
+
+    if (event.data.type === "normal") {
+        $("#wrapper").show();  // แสดง wrapper
+    }
+});

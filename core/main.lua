@@ -26,22 +26,6 @@ fastItems = {}
 fastitem = nil
 FastNum = 1
 weaponsiv = {}
-Config = {}
-
--- ความสามารถที่ไอเทมสามารถทำได้
-Config.Caenble = {
-    ["use"] = {
-        "painkiller", 
-        "idcard", 
-    },
-    ["give"] = {
-        "painkiller",  
-    },
-    ["drop"] = {
-        "painkiller",
-    }
-}
-
 
 local fastWeapons = {
     [1] = {

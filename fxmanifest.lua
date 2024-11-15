@@ -23,6 +23,7 @@ files {
 }
 
 client_script {
+	"config/caenble.lua"
     "config/category.lua", 
     'core/main.lua'
 }

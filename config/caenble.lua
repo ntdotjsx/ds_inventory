@@ -1,13 +1,14 @@
 Config = {}
 
 Config.Caenble = {
-	["use"] = {
-        "painkiller",
+    ["use"] = {
+        "painkiller", 
+        "idcard", 
     },
     ["give"] = {
-        "painkiller",
+        "painkiller",  
     },
     ["drop"] = {
-        "painkiller", 
+        "painkiller",
     }
 }

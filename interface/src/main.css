@@ -14,8 +14,7 @@ body {
     align-items: center;
     justify-content: center;
     height: 100vh;
-    font-family: Arial, sans-serif;
-    background: url('https://i.ytimg.com/vi/2k9Nsq7ykB4/maxresdefault.jpg');
+    /* background: url('https://i.ytimg.com/vi/2k9Nsq7ykB4/maxresdefault.jpg'); */
 }
 
 .inventory-wrapper {

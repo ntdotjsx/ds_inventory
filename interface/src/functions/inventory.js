@@ -200,7 +200,7 @@ function makeDraggables() {
     });
 }
 
-// ฟังก์ชันทำให้ sidebar-item รับการวาง
+// ฟังก์ชันทำให้ sidebar-item รับการวางและสามารถลบไอเท็มได้ด้วยการคลิกขวา
 function makeSidebarDroppables() {
     $(".sidebar-item").droppable({
         accept: ".item-image", // เฉพาะ .item-image เท่านั้นที่จะถูกลากมาวางได้
@@ -208,9 +208,28 @@ function makeSidebarDroppables() {
             const draggedItem = ui.helper[0];  // element ที่ถูกลาก
             const itemName = $(draggedItem).attr('alt');  // ดึงชื่อไอเทม
             console.log("Item dropped:", itemName);
-            // ทำสิ่งที่ต้องการเมื่อไอเทมถูกวางใน sidebar
-            $(this).html(`<img src='/img/items/${itemName}.png' alt='${itemName}' class='item-image'>`);
+
+            // ถ้ามีไอเท็มอยู่แล้วใน sidebar-item ให้ลบไอเท็มเก่าออก
+            $(this).find('.item-image').remove();
+
+            // ซ่อนตัวเลขในช่องนั้นเมื่อวางไอเท็ม
+            $(this).contents().filter(function() {
+                return this.nodeType === 3; // ตัวเลขเป็น text node
+            }).wrap('<span class="hidden-text"></span>');
+
+            // เพิ่มรูปภาพไอเท็มใหม่ลงใน sidebar-item
+            $(this).append(`<img src='/img/items/${itemName}.png' alt='${itemName}' class='item-image'>`);
         }
+    });
+
+    // เพิ่ม event listener สำหรับการคลิกขวาที่ sidebar-item เพื่อเอา item ออก
+    $(".sidebar-item").on("contextmenu", function (e) {
+        e.preventDefault();  // ป้องกันเมนู context ปกติ
+        $(this).find('.item-image').remove();  // ลบเฉพาะไอเท็มที่เป็นรูปภาพ
+
+        // นำตัวเลขกลับมาแสดง
+        $(this).find('.hidden-text').contents().unwrap();
+        console.log("Item removed from sidebar-item");
     });
 }
 

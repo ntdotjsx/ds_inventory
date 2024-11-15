@@ -119,6 +119,10 @@ body {
     font-size: 0.8em;
 }
 
+.hidden-text {
+    display: none;
+}
+
 .item-slot {
     position: relative;
     width: 91.5px;

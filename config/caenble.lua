@@ -2,9 +2,9 @@ Config = {}
 
 Config.Caenble = {
 	["use"] = {
-        "water",
+        "painkiller",
     },
     ["drop"] = {
-        "Aed", 
+        "painkiller", 
     }
 }

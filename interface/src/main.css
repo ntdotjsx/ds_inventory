@@ -34,7 +34,7 @@ body {
 
 .outside {
     border-radius: 10px;
-    border: solid 5px #ffffff46;
+    border: solid 5px #ffffff20;
     width: max-content;
 }
 
@@ -85,7 +85,7 @@ body {
 
 .inventory-content {
     border-radius: 10px;
-    border: solid 5px #ffffff46;
+    border: solid 5px #ffffff20;
     width: max-content;
 }
 

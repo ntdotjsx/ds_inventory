@@ -207,6 +207,7 @@ function makeSidebarDroppables() {
         drop: function (event, ui) {
             const draggedItem = ui.helper[0];  // element ที่ถูกลาก
             const itemName = $(draggedItem).attr('alt');  // ดึงชื่อไอเทม
+            const slot = $(this).data('slot');  // ดึงค่า slot จาก data-slot
             console.log("Item dropped:", itemName);
 
             // ถ้ามีไอเท็มอยู่แล้วใน sidebar-item ให้ลบไอเท็มเก่าออก
@@ -219,17 +220,26 @@ function makeSidebarDroppables() {
 
             // เพิ่มรูปภาพไอเท็มใหม่ลงใน sidebar-item
             $(this).append(`<img src='/img/items/${itemName}.png' alt='${itemName}' class='item-image'>`);
+
+            $.post("https://Dust_Inventory/PutIntoFast", JSON.stringify({
+                item: itemName,
+                slot: slot,
+            }));
         }
     });
 
     // เพิ่ม event listener สำหรับการคลิกขวาที่ sidebar-item เพื่อเอา item ออก
     $(".sidebar-item").on("contextmenu", function (e) {
         e.preventDefault();  // ป้องกันเมนู context ปกติ
+        const slot = $(this).data('slot');  // ดึง slot ที่จะเอาไอเท็มออก
         $(this).find('.item-image').remove();  // ลบเฉพาะไอเท็มที่เป็นรูปภาพ
 
         // นำตัวเลขกลับมาแสดง
         $(this).find('.hidden-text').contents().unwrap();
         console.log("Item removed from sidebar-item");
+        $.post("https://Dust_Inventory/TakeFromFast", JSON.stringify({
+            slot: slot,
+        }));
     });
 }
 

@@ -107,12 +107,17 @@ function GetDataInventory()
     table.insert(data, IDCard)
     -- print(json.encode(fastWeapons[FastNum]))
     -- print(ESX.DumpTable(fastWeapons))
-    for slot, item in pairs(fastWeapons[FastNum]) do
-        if item == "idcard" then
-            IDCard.slot = slot
-            table.insert(fastItems, IDCard)
+    if fastWeapons[FastNum] ~= nil then  -- ตรวจสอบว่ามีค่าอยู่ใน fastWeapons[FastNum] หรือไม่
+        for slot, item in pairs(fastWeapons[FastNum]) do
+            if item == "idcard" then
+                IDCard.slot = slot
+                table.insert(fastItems, IDCard)
+            end
         end
+    else
+        print("No items in fastWeapons for slot:", FastNum)
     end
+    
 
     if Mask then
         skinMask = json.decode(Mask.skin)
@@ -261,53 +266,28 @@ function GetDataInventory()
         end
     end
 
-    for slot, item in pairs(fastWeapons[FastNum]) do
-        for i = 1, #Accessory_Items, 1 do
-            if item == Accessory_Items[i].name then
-                table.insert(
-                    fastItems,
-                    {
-                        label = Accessory_Items[i].label,
-                        count = 0,
-                        weight = 0,
-                        type = "item_accessories",
-                        name = Accessory_Items[i].name,
-                        itemnum = Accessory_Items[i].itemnum,
-                        itemskin = Accessory_Items[i].itemskin,
-                        itemarms = Accessory_Items[i].itemarms,
-                        itemarms2 = Accessory_Items[i].itemarms2,
-                        itemtshirt = Accessory_Items[i].itemtshirt,
-                        itemtshirt2 = Accessory_Items[i].itemtshirt2,
-                        itemchain = Accessory_Items[i].itemchain,
-                        itemchain2 = Accessory_Items[i].itemchain2,
-                        usable = true,
-                        rare = false,
-                        canRemove = true,
-                        slot = slot
-                    }
-                )
-            end
-        end
-    end
-
-    for key, v in pairs(inven) do
-        if inven[key].count <= 0 then
-            inven[key] = nil
-        else
-            local founditem = false
-            for slot, item in pairs(fastWeapons[FastNum]) do
-                if item == inven[key].name then
+    if fastWeapons[FastNum] ~= nil then
+        for slot, item in pairs(fastWeapons[FastNum]) do
+            for i = 1, #Accessory_Items, 1 do
+                if item == Accessory_Items[i].name then
                     table.insert(
                         fastItems,
                         {
-                            label = inven[key].label,
-                            count = inven[key].count,
-                            real = inven[key].real or nil,
+                            label = Accessory_Items[i].label,
+                            count = 0,
                             weight = 0,
-                            type = inven[key].type,
-                            name = inven[key].name,
-                            usable = inven[key].usable,
-                            rare = inven[key].rare,
+                            type = "item_accessories",
+                            name = Accessory_Items[i].name,
+                            itemnum = Accessory_Items[i].itemnum,
+                            itemskin = Accessory_Items[i].itemskin,
+                            itemarms = Accessory_Items[i].itemarms,
+                            itemarms2 = Accessory_Items[i].itemarms2,
+                            itemtshirt = Accessory_Items[i].itemtshirt,
+                            itemtshirt2 = Accessory_Items[i].itemtshirt2,
+                            itemchain = Accessory_Items[i].itemchain,
+                            itemchain2 = Accessory_Items[i].itemchain2,
+                            usable = true,
+                            rare = false,
                             canRemove = true,
                             slot = slot
                         }
@@ -315,7 +295,41 @@ function GetDataInventory()
                 end
             end
         end
+    else
+        print("No items in fastWeapons for slot:", FastNum)
     end
+    
+    -- ตรวจสอบอีกครั้งว่า fastWeapons[FastNum] ไม่เป็น nil สำหรับการวนลูปนี้
+    if fastWeapons[FastNum] ~= nil then
+        for key, v in pairs(inven) do
+            if inven[key].count <= 0 then
+                inven[key] = nil
+            else
+                local founditem = false
+                for slot, item in pairs(fastWeapons[FastNum]) do
+                    if item == inven[key].name then
+                        table.insert(
+                            fastItems,
+                            {
+                                label = inven[key].label,
+                                count = inven[key].count,
+                                real = inven[key].real or nil,
+                                weight = 0,
+                                type = inven[key].type,
+                                name = inven[key].name,
+                                usable = inven[key].usable,
+                                rare = inven[key].rare,
+                                canRemove = true,
+                                slot = slot
+                            }
+                        )
+                    end
+                end
+            end
+        end
+    else
+        print("No items in fastWeapons for slot:", FastNum)
+    end    
     return data, currentWeight, fastItems
 end
 
@@ -325,3 +339,58 @@ RegisterNUICallback(
         TriggerServerEvent("esx:useItem", data.itemName)
     cb("ok")
 end)
+
+RegisterNUICallback("PutIntoFast", function(data, cb)
+    local slot = tonumber(data.slot)
+    if slot and data.item then
+        fastWeapons[slot] = { name = data.item }  -- เก็บข้อมูลไอเท็มใน fast slot ตาม slot ที่ส่งมา
+        -- print("Item "..data.item.." assigned to slot "..slot)
+    end
+    cb("ok")
+end)
+
+RegisterNUICallback("TakeFromFast", function(data, cb)
+    local slot = tonumber(data.slot)
+    if slot and fastWeapons[slot] then
+        fastWeapons[slot] = nil 
+        print("Removed item from fast slot:", slot)
+    end
+    cb("ok")
+end)
+
+function OnUseFastSlot(number)
+    if fastWeapons[number] and fastWeapons[number].name and not IsEntityDead(PlayerPedId()) then
+        TriggerServerEvent("esx:useItem", fastWeapons[number].name)
+        -- print("Used item from slot", number)
+    end
+end
+
+RegisterKeyMapping('fast1', 'Use Fast Slot (1)', 'keyboard', '1')
+RegisterKeyMapping('fast2', 'Use Fast Slot (2)', 'keyboard', '2')
+RegisterKeyMapping('fast3', 'Use Fast Slot (3)', 'keyboard', '3')
+RegisterKeyMapping('fast4', 'Use Fast Slot (4)', 'keyboard', '4')
+RegisterKeyMapping('fast5', 'Use Fast Slot (5)', 'keyboard', '5')
+RegisterKeyMapping('fast6', 'Use Fast Slot (6)', 'keyboard', '6')
+RegisterKeyMapping('fast7', 'Use Fast Slot (7)', 'keyboard', '7')
+
+RegisterCommand('fast1', function() 
+    OnUseFastSlot(1) 
+end, false)
+RegisterCommand('fast2', function() 
+    OnUseFastSlot(2) 
+end, false)
+RegisterCommand('fast3', function() 
+    OnUseFastSlot(3) 
+end, false)
+RegisterCommand('fast4', function() 
+    OnUseFastSlot(4) 
+end, false)
+RegisterCommand('fast5', function() 
+    OnUseFastSlot(5) 
+end, false)
+RegisterCommand('fast6', function() 
+    OnUseFastSlot(6) 
+end, false)
+RegisterCommand('fast7', function() 
+    OnUseFastSlot(7) 
+end, false)

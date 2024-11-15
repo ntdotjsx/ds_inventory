@@ -1,5 +1,6 @@
 import $ from 'jquery';  // import jQuery ในไฟล์ของคุณ
 import 'jquery-ui/ui/widgets/draggable';
+import 'jquery-ui/ui/widgets/droppable';  // เพิ่มการใช้งาน droppable
 
 const closeKeys = [27, 84];  // ปุ่มที่ใช้สำหรับปิดอินเวนทอรี
 const MAX_SLOTS = 48;  // จำนวนช่องในอินเวนทอรี
@@ -58,7 +59,6 @@ function createSlot(i, item) {
 
             // ตรวจสอบว่าช่องนี้มีปุ่มอยู่แล้วหรือไม่
             if (currentUseSlot === slot) {
-                // ซ่อนปุ่ม use และ drop ถ้ามีการคลิกขวาที่ item เดิมซ้ำ
                 currentUseSlot = null;
                 slot.innerHTML = ''; // ลบปุ่มออก
 
@@ -169,36 +169,8 @@ function createSlot(i, item) {
     return slot;
 }
 
-
+// ฟังก์ชันสำหรับทำให้ item สามารถลากได้
 function makeDraggables() {
-    for (let i = 1; i <= 7; i++) {
-        $(`[data-slot="${i}"]`).droppable({
-            hoverClass: 'FasthoverControl',
-            drop: function (event, ui) {
-                const itemData = ui.draggable.data("item");
-                const itemInventory = ui.draggable.data("inventory");
-
-                if (type === "normal" && (itemInventory === "main" || itemInventory === "fast")) {
-                    $.post("https://Dust_Inventory/PutIntoFast", JSON.stringify({
-                        item: itemData,
-                        slot: i
-                    }));
-                }
-            }
-        });
-    }
-}
-
-
-// ฟังก์ชันสำหรับอัพเดตอินเวนทอรี
-export function updateInventory() {
-    $("#inventory").html('');
-    for (let i = 0; i < MAX_SLOTS; i++) {
-        const slot = createSlot(i, items[i] && items[i].name !== "" ? items[i] : undefined);
-        $("#inventory").append(slot);
-    }
-
-    // เรียกใช้ draggable หลังจากที่อินเวนทอรีถูกอัพเดต
     $('.item-image').draggable({
         appendTo: 'body',
         zIndex: 99999,
@@ -216,14 +188,9 @@ export function updateInventory() {
         },
         start: function () {
             $(this).css('background-image', 'none');
-            // const audioouta = new Audio();
-            // audioouta.src = "./sound/sec.mp3";
-            // audioouta.play();
-            // audioouta.volume = 0.1;
         },
         stop: function () {
             const itemData = $(this).data("item");
-
             if (itemData !== undefined && itemData.name !== undefined) {
                 $("#drop").removeClass("disabled");
                 $("#use").removeClass("disabled");
@@ -233,12 +200,32 @@ export function updateInventory() {
     });
 }
 
-// ตรวจจับการกดปุ่มเพื่อปิดอินเวนทอรี
-$("body").on("keyup", function (key) {
-    if (closeKeys.includes(key.which)) {
-        closeInventory();
+// ฟังก์ชันทำให้ sidebar-item รับการวาง
+function makeSidebarDroppables() {
+    $(".sidebar-item").droppable({
+        accept: ".item-image", // เฉพาะ .item-image เท่านั้นที่จะถูกลากมาวางได้
+        drop: function (event, ui) {
+            const draggedItem = ui.helper[0];  // element ที่ถูกลาก
+            const itemName = $(draggedItem).attr('alt');  // ดึงชื่อไอเทม
+            console.log("Item dropped:", itemName);
+            // ทำสิ่งที่ต้องการเมื่อไอเทมถูกวางใน sidebar
+            $(this).html(`<img src='/img/items/${itemName}.png' alt='${itemName}' class='item-image'>`);
+        }
+    });
+}
+
+// ฟังก์ชันสำหรับอัพเดตอินเวนทอรี
+export function updateInventory() {
+    $("#inventory").html('');
+    for (let i = 0; i < MAX_SLOTS; i++) {
+        const slot = createSlot(i, items[i] && items[i].name !== "" ? items[i] : undefined);
+        $("#inventory").append(slot);
     }
-});
+
+    // เรียกใช้ draggable หลังจากที่อินเวนทอรีถูกอัพเดต
+    makeDraggables();
+    makeSidebarDroppables();  // เรียกใช้งาน droppable สำหรับ sidebar
+}
 
 // ฟังก์ชันการใช้ไอเทม
 function useItem(index) {
@@ -247,26 +234,4 @@ function useItem(index) {
         $.post("http://Dust_Inventory/UseItem", JSON.stringify({ itemName: item.name }));
     }
 }
-
-// ฟังก์ชันสำหรับปิดอินเวนทอรี
-function closeInventory() {
-    $.post("http://Dust_Inventory/NUIFocusOff", JSON.stringify({
-        type: "normal"
-    }));
-    $("#inventory").hide();
-    $("#wrapper").hide();
-}
-
-// ฟังก์ชันสำหรับรับข้อมูลจากเซิร์ฟเวอร์ (ผ่าน message)
-window.addEventListener('message', (event) => {
-    if (event.data.action === 'showinventory') {
-        items = event.data.itemList || [];  // รับรายการไอเทมจากเซิร์ฟเวอร์
-        updateInventory();  // อัพเดตอินเวนทอรี
-
-        $("#inventory").show();  // แสดงอินเวนทอรี
-    }
-
-    if (event.data.type === "normal") {
-        $("#wrapper").show();  // แสดง wrapper
-    }
-});
+//ih

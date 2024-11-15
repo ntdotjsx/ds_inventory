@@ -5,36 +5,36 @@ export default function KeySlot() {
     return (
         <>
             <div className="key-container" id="key">
-                <div class="key-slot">ADMIN 123</div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
-                <div class="key-slot"></div>
+                <div className="key-slot">ADMIN 123</div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
+                <div className="key-slot"></div>
             </div>
         </>
     )

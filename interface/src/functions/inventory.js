@@ -234,3 +234,4 @@ function useItem(index) {
         $.post("http://Dust_Inventory/UseItem", JSON.stringify({ itemName: item.name }));
     }
 }
+//ih
